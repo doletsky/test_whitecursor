@@ -18,11 +18,15 @@ function isUserPassword(string $userLogin, string $password)
 $request = \Bitrix\Main\Context::getCurrent()->getRequest();
 
 if(isUserPassword($request->get("login"), $request->get("pass"))) {
-    echo '{"pass": 1}';
+    $res["pass"] = 1;
 } else {
-	echo '{"pass": 0}';
+    $res["pass"] = 0;
 }
+
+header('Content-Type: application/json; charset=utf-8');
+echo json_encode($res);
 ?>
 <?
 require_once($_SERVER['DOCUMENT_ROOT']. "/bitrix/modules/main/include/epilog_after.php");
+die();
 ?>

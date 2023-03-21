@@ -13,8 +13,7 @@ $( document ).ready(function(){
 				let pass = $('input[name="USER_PASSWORD"]').val();
 				$.post( "local/ajax/check_user.php", { login: login, pass: pass },
 					function( data ) {
-						let answ = JSON.parse(data);
-						if(answ.pass == 1){
+						if(data.pass == 1){
 							$('form[name="form_auth"]').submit();
 						} else {
 							$('.bx-auth-note').text('Не верный Логин или Пароль.');
