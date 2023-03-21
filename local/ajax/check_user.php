@@ -2,20 +2,25 @@
 require_once($_SERVER['DOCUMENT_ROOT']. "/bitrix/modules/main/include/prolog_before.php");
 ?>
 <?
-function isUserPassword($userId, $password)
+function isUserPassword(string $userLogin, string $password)
     {
-        $userData = \CUser::GetByID($userId)->Fetch();
+        $dbUser = \Bitrix\Main\UserTable::getList([
+            'select' => ['ID', 'PASSWORD'],
+            'filter' => ['LOGIN' => $userLogin ]
+        ]);
+        if($dbUser->getSelectedRowsCount() == 1){
+            $arUser = $dbUser->Fetch();
+            return \Bitrix\Main\Security\Password::equals($arUser['PASSWORD'], $password);
+        }
 
-        return \Bitrix\Main\Security\Password::equals($userData['PASSWORD'], $password);
     }
+
 $request = \Bitrix\Main\Context::getCurrent()->getRequest();
 
-$dbRes = CUser::GetByLogin($request->get("login"));
-if($res = $dbRes->Fetch()) {
-	if(isUserPassword($res['ID'], $request->get("pass")) == 1 ) echo '{"pass": 1}';
-	else echo '{"pass":0}';
+if(isUserPassword($request->get("login"), $request->get("pass"))) {
+    echo '{"pass": 1}';
 } else {
-	echo '{"pass":0}';
+	echo '{"pass": 0}';
 }
 ?>
 <?
