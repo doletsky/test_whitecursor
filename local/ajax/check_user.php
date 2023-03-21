@@ -8,9 +8,11 @@ function isUserPassword($userId, $password)
 
         return \Bitrix\Main\Security\Password::equals($userData['PASSWORD'], $password);
     }
-$dbRes = CUser::GetByLogin($_POST['login']);
+$request = \Bitrix\Main\Context::getCurrent()->getRequest();
+
+$dbRes = CUser::GetByLogin($request->get("login"));
 if($res = $dbRes->Fetch()) {
-	if(isUserPassword($res['ID'], $_POST['pass']) == 1 ) echo '{"pass": 1}';
+	if(isUserPassword($res['ID'], $request->get("pass")) == 1 ) echo '{"pass": 1}';
 	else echo '{"pass":0}';
 } else {
 	echo '{"pass":0}';
